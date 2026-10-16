@@ -43,8 +43,6 @@ export default function Navbar() {
     { label: 'Home', href: '/' },
     { label: 'All Fireworks', href: '/products' },
     { label: 'Diwali Hampers', href: '/hampers', badge: 'Offers' },
-    { label: 'Sky Shots', href: '/categories/aerial-shots' },
-    { label: 'Sparklers', href: '/categories/sparklers' },
     { label: 'Track Order', href: '/track-order' },
   ];
 

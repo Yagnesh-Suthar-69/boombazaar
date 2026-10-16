@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import FireworksCanvas from '@/components/FireworksCanvas';
 import FloatingWhatsAppConcierge from '@/components/FloatingWhatsAppConcierge';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 export const metadata: Metadata = {
   title: 'Boom Bazaar — Premium Certified Fireworks & Sparklers',
@@ -33,10 +34,11 @@ export default function RootLayout({
         <CartProvider>
           <FireworksCanvas />
           <Navbar />
-          <main className="flex-1 relative z-10">{children}</main>
+          <main className="flex-1 relative z-10 pb-16 md:pb-0">{children}</main>
           <Footer />
           <CartDrawer />
           <FloatingWhatsAppConcierge />
+          <MobileBottomNav />
         </CartProvider>
       </body>
     </html>

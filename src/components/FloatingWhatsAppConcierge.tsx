@@ -16,7 +16,7 @@ export default function FloatingWhatsAppConcierge() {
   }, []);
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2.5 font-sans pointer-events-auto">
+    <div className="fixed bottom-20 md:bottom-5 right-4 md:right-5 z-30 flex flex-col items-end gap-2.5 font-sans pointer-events-auto">
       {/* Speech Prompt Bubble */}
       {hasPrompted && !isOpen && (
         <div className="relative bg-white rounded-2xl p-3.5 shadow-xl border border-orange-200/90 max-w-xs animate-bounce-subtle text-left">
