@@ -23,6 +23,27 @@ let localDbInstance: any = null;
  * On Vercel / AWS Lambda, process.cwd() is '/var/task' (read-only), so we fallback to os.tmpdir() (/tmp).
  */
 function getWritableDbDir(): string {
+  // If running on Vercel, AWS Lambda, or any serverless platform:
+  // process.cwd() is '/var/task' which is read-only. We immediately use os.tmpdir().
+  const isServerless =
+    Boolean(process.env.VERCEL) ||
+    Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME) ||
+    Boolean(process.env.LAMBDA_TASK_ROOT) ||
+    Boolean(process.env.NOW_REGION) ||
+    (typeof process.cwd === 'function' && process.cwd().includes('/var/task'));
+
+  if (isServerless) {
+    const tmpDir = path.join(os.tmpdir(), 'boombazaar-data');
+    try {
+      if (!fs.existsSync(tmpDir)) {
+        fs.mkdirSync(tmpDir, { recursive: true });
+      }
+      return tmpDir;
+    } catch {
+      return os.tmpdir();
+    }
+  }
+
   // 1. Explicit DB_DIR environment variable
   if (process.env.DB_DIR) {
     try {
@@ -35,28 +56,15 @@ function getWritableDbDir(): string {
     }
   }
 
-  // 2. Try project root .data directory (standard local development)
+  // 2. Project root .data directory for local development
   try {
     const localDir = path.join(process.cwd(), '.data');
     if (!fs.existsSync(localDir)) {
       fs.mkdirSync(localDir, { recursive: true });
     }
-    // Verify write permission (fails on read-only environments like /var/task)
-    const probe = path.join(localDir, `.write_probe_${Date.now()}`);
-    fs.writeFileSync(probe, '1');
-    fs.unlinkSync(probe);
     return localDir;
   } catch {
-    // 3. Fallback to OS temp directory (fully writable on Vercel / AWS Lambda / Docker)
-    const tmpDir = path.join(os.tmpdir(), 'boombazaar-data');
-    try {
-      if (!fs.existsSync(tmpDir)) {
-        fs.mkdirSync(tmpDir, { recursive: true });
-      }
-      return tmpDir;
-    } catch {
-      return os.tmpdir();
-    }
+    return os.tmpdir();
   }
 }
 
@@ -238,39 +246,65 @@ function getLocalSQLite(): any {
  * Used when running on Vercel / external Node servers with Cloudflare credentials configured.
  */
 function getCloudflareD1Http(): D1Database | null {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID;
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.CLOUDFLARE_D1_TOKEN;
-  const databaseId = process.env.CLOUDFLARE_DATABASE_ID || '68376693-77c8-489e-9b66-349baf8b8755';
+  const accountId = (
+    process.env.CLOUDFLARE_ACCOUNT_ID ||
+    process.env.CF_ACCOUNT_ID ||
+    process.env.CLOUDFLARE_ACCOUNT ||
+    process.env.ACCOUNT_ID ||
+    ''
+  ).trim();
+
+  const apiToken = (
+    process.env.CLOUDFLARE_API_TOKEN ||
+    process.env.CF_API_TOKEN ||
+    process.env.CLOUDFLARE_D1_TOKEN ||
+    process.env.CF_TOKEN ||
+    process.env.CLOUDFLARE_TOKEN ||
+    process.env.CLOUDFLARE_API_KEY ||
+    ''
+  ).trim();
+
+  const databaseId = (
+    process.env.CLOUDFLARE_DATABASE_ID ||
+    process.env.CF_DATABASE_ID ||
+    process.env.DATABASE_ID ||
+    '68376693-77c8-489e-9b66-349baf8b8755'
+  ).trim();
 
   if (!accountId || !apiToken || !databaseId) {
     return null;
   }
 
+  console.log('[BoomBazaar DB] Connected via Cloudflare D1 REST API (Database ID:', databaseId, ')');
+
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`;
 
   async function executeHttp(sql: string, params: any[]) {
+    const cleanParams = params.map(p => (typeof p === 'boolean' ? (p ? 1 : 0) : p === undefined ? null : p));
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ sql, params }),
+      body: JSON.stringify({ sql, params: cleanParams }),
     });
 
     if (!res.ok) {
       const errText = await res.text();
+      console.error('[BoomBazaar DB] Cloudflare D1 HTTP query error:', res.status, errText, 'SQL:', sql);
       throw new Error(`Cloudflare D1 REST API error (${res.status}): ${errText}`);
     }
 
     const data = await res.json();
     if (!data.success) {
       const errMessage = data.errors?.map((e: any) => e.message).join(', ') || 'Unknown Cloudflare D1 error';
+      console.error('[BoomBazaar DB] Cloudflare D1 error response:', errMessage, 'SQL:', sql);
       throw new Error(`Cloudflare D1 error: ${errMessage}`);
     }
 
-    const firstResult = data.result?.[0] || { results: [], success: true, meta: { changes: 0, last_row_id: 0 } };
-    return firstResult;
+    const firstResult = Array.isArray(data.result) ? data.result[0] : data.result;
+    return firstResult || { results: [], success: true, meta: { changes: 0, last_row_id: 0 } };
   }
 
   return {
