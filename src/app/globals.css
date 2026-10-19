@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-outfit: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #fafafc;
+  color: #0f172a;
+  overflow-x: hidden;
+  selection-background-color: #ef233c;
+  selection-color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-outfit);
+}
+
+/* Custom Fireworks Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d90429 0%, #ea580c 50%, #d97706 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #b91c1c 0%, #c2410c 100%);
+}
+
+/* Clean Professional Light Mode Panels (Aceternity Inspired) */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.glass-panel-glow {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(239, 35, 60, 0.25);
+  box-shadow: 0 10px 30px -5px rgba(239, 35, 60, 0.12), 0 2px 10px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Subtle Shimmer Border */
+.shimmer-card {
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.shimmer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(234, 88, 12, 0.08);
+}
+
+/* Explosive button hover animation (Uiverse Inspired) */
+.btn-firecracker {
+  background: linear-gradient(135deg, #d90429 0%, #ea580c 50%, #d97706 100%);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(217, 4, 41, 0.28);
+}
+
+.btn-firecracker:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 22px rgba(217, 4, 41, 0.4), 0 0 15px rgba(234, 88, 12, 0.25);
+}
+
+.btn-firecracker:active {
+  transform: translateY(0);
+}
+
+/* Golden Sparkler Button */
+.btn-sparkler {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: #78350f;
+  font-weight: 700;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+}
+
+.btn-sparkler:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+}
+
+/* Text Gradients */
+.text-gradient-fire {
+  background: linear-gradient(135deg, #d90429 0%, #ea580c 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(234, 88, 12, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(234, 88, 12, 0.45);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+/* Radiant card border on hover */
+.radiant-card {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.radiant-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.3), rgba(217, 119, 6, 0.1), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.radiant-card:hover::before {
+  opacity: 1;
+}

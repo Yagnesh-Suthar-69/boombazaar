@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "boom-bazaar",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "boom_bazaar",
+      "database_id": "68376693-77c8-489e-9b66-349baf8b8755",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "NEXT_PUBLIC_APP_NAME": "Boom Bazaar",
+    "NEXT_PUBLIC_WHATSAPP_PHONE": "8128627017"
+  }
+}
