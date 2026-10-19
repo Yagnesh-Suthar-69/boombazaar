@@ -116,9 +116,3 @@ npx wrangler deploy
 ```
 
 ---
-
-## 📜 Compliance & Safety (PESO Guidelines)
-Boom Bazaar enforces statutory fireworks compliance:
-1. All crackers are certified Green Fireworks with reduced decibel and emission levels.
-2. Orders require mandatory confirmation of 18+ age eligibility.
-3. Fireworks are strictly for outdoor use with open clearance.
